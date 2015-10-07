@@ -13,6 +13,11 @@ app.config.update(
     DEBUG = True,
 )
 
+f = open('corpus/pg158.txt', 'r')
+content_text = f.read()
+temp = cc.tokenize(content_text)
+markov_chain = cc.ngrams(temp, 4)
+
 @app.route('/get_title')
 def get_title():
 	return 'Fear'
@@ -28,7 +33,11 @@ def index():
 		if request.method == 'POST':
 			song = request.form['song']
 			title = request.form['title']
-			return render_template('index.html', song=song, title=title, metaphors=cc.get_metaphors(title))
+
+			metaphors=cc.get_metaphors(title)
+			lyrics = cc.generate_text_syl(markov_chain, len(song.split()))
+
+			return render_template('index.html', song=song, title=title, lyrics=lyrics)
 		else:
 			return render_template('index.html')
 	except:

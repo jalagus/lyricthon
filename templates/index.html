@@ -27,13 +27,11 @@ Welcome to lyrics generator! Just enter the melody in LilyPond format and enter 
 
 <button type="submit" value="Send" class="btn btn-default" id="submit" > <span class="glyphicon glyphicon-music" aria-hidden="true"></span> Gimme some lyrics</button>
 </form>
-<p>
-  {% for entry in metaphors %}
-    <li>{{ entry }}</li>
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
-</p>
+
+{% if song %}
+	<p>{{lyrics}}</p>
+{% endif %}
+
 <script>
 jQuery( "#suggest_title" ).click(function() {
 	jQuery.get( "/get_title", function( data ) {
