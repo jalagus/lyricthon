@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %} - Home{% endblock %}
+{% block content %}
+
+{% if error %}
+	<div class="alert alert-danger" role="alert"><b>{{error.title}}</b> {{error.msg}}</div>
+{% endif %}
+<p>
+Welcome to lyrics generator! Just enter the melody in LilyPond format and enter the title of the song and I'll do the rest!
+</p>
+<form action="/" method="POST">
+<div class="form-group">
+  <label for="title">Song title</label>
+<div class="input-group">
+  <input type="text" class="form-control" id="title" name="title" value="{% if song %}{{title}}{% endif %}"/>
+  <span class="input-group-btn">
+    <button class="btn btn-default" id="suggest_title" type="button">Suggest random title</button>
+  </span>
+</div>
+</div>
+
+<div class="form-group">
+  <label for="song">Song in <a target="_blank" href="http://www.lilypond.org/">LilyPond</a> format</label>
+  <textarea class="form-control" rows="5" id="song" name="song">{% if song %}{{song}}{% endif %}</textarea>
+</div>
+<button type="button" value="Generate song" class="btn btn-default" id="generate_song" > <span class="glyphicon glyphicon-music" aria-hidden="true"></span> Generate random song</button>
+
+<button type="submit" value="Send" class="btn btn-default" id="submit" > <span class="glyphicon glyphicon-music" aria-hidden="true"></span> Gimme some lyrics</button>
+</form>
+<p>
+  {% for entry in metaphors %}
+    <li>{{ entry }}</li>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+</p>
+<script>
+jQuery( "#suggest_title" ).click(function() {
+	jQuery.get( "/get_title", function( data ) {
+  		jQuery( "#title" ).val( data );
+	});
+});
+</script>
+
+{% endblock %}
