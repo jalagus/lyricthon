@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template, send_from_directory, request
 import cc
+import random
 
 class Error:
 	def __init__(self, title, msg):
@@ -20,7 +21,7 @@ markov_chain = cc.ngrams(temp, 4)
 
 @app.route('/get_title')
 def get_title():
-	return 'Fear'
+	return cc.prettify(' '.join(random.choice(markov_chain.keys())))
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -35,7 +36,7 @@ def index():
 			title = request.form['title']
 
 			metaphors=cc.get_metaphors(title)
-			lyrics = cc.generate_text_syl(markov_chain, len(song.split()))
+			lyrics = cc.prettify(cc.generate_text_syl(markov_chain, len(song.split())))
 
 			return render_template('index.html', song=song, title=title, lyrics=lyrics)
 		else:

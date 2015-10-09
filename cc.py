@@ -4,6 +4,7 @@ from hyphen import Hyphenator, dict_info
 from hyphen.dictools import *
 from collections import defaultdict
 import random
+import re
 
 h_en = Hyphenator('en_US', directory='./')
 
@@ -65,13 +66,18 @@ def generate_text_syl(mchain, length, start_word = ''):
 			last = x
 		text += (start[-1], )
 		i += syllables(start[-1])
-		
-	temp = [h_en.syllables(unicode(x)) for x in text]
-	print "Final", len([x for sublist in temp for x in sublist])
-	return ' '.join([x for sublist in temp for x in sublist])
-"""
-f = open('corpus/pg158.txt', 'r')
-content_text = f.read()
-temp = tokenize(content_text)
-markov_chain = ngrams(temp, 4)
-print generate_text_syl(markov_chain, 20)"""
+
+	temp = ['-'.join(h_en.syllables(unicode(x))) for x in text]
+	return ' '.join(temp)
+
+def prettify(tuples):
+	print len(tuples), tuples
+	
+	text = ''.join(str(w) for w in tuples)
+	text = text[0].upper() + text[1:]
+	text = re.sub('\s\.', '.', text)
+	text = re.sub('\s\,', ',', text)
+	for i in range(2, len(text)):
+		if text[i-2] == '.':
+			text = text[:i] + text[i].upper() + text[i+1:]
+	return text
