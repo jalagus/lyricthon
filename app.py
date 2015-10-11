@@ -5,6 +5,7 @@ import lilypond
 import random
 
 NGRAM_SIZE = 3
+PORT = 5000
 
 current_version = 1
 
@@ -103,5 +104,5 @@ def index():
 
 # launch
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", PORT))
     app.run(host='0.0.0.0', port=port)
