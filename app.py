@@ -28,7 +28,7 @@ def generate_title():
 	i = 0
 	while i < 100:
 		i += 1
-		title = ' '.join(cc.generate_music(markov_chain, 3)).split()
+		title = ' '.join(cc.generate_sentence(markov_chain, 3)).split()
 		for j,e in enumerate(title):
 			if cc.is_noun(title[j]):
 				i = 1000

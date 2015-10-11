@@ -82,7 +82,7 @@ def generate_music(mchain, length = 30, start_word = ''):
 		text += (start[-1], )
 	return text
 
-# Does not guarantee syllable count of variable "length"
+# Does not guarantee syllable count of "length"
 def generate_text_syl(mchain, length, metaphors, start_word = ''):
 	def sum_tuples(l):
 		return reduce(lambda a,b: a + b[1], l, 0)
