@@ -12,7 +12,7 @@ Welcome to lyrics generator! Just enter the melody in LilyPond format and enter 
 <div class="form-group">
   <label for="title">Song title</label>
 <div class="input-group">
-  <input type="text" class="form-control" id="title" name="title" value="{% if song %}{{title}}{% endif %}"/>
+  <input type="text" class="form-control" id="title" name="title" value="{% if title %}{{title}}{% endif %}"/>
   <span class="input-group-btn">
     <button class="btn btn-default" id="suggest_title" type="button">Suggest random title</button>
   </span>
@@ -30,14 +30,40 @@ Welcome to lyrics generator! Just enter the melody in LilyPond format and enter 
 
 {% if song %}
 	<h2>Sing this!</h2>
-	<p>{{lyrics}}</p>
+	<pre>{{lyrics}}</pre>
+
+	<p>
+	<button class="btn btn-danger" id="rating_bad" type="button">Bad</button>
+	<button class="btn btn-default" id="rating_neutral" type="button">Neutral</button>
+	<button class="btn btn-success " id="rating_good" type="button">Good</button>
+	</p>
+
+	<div>
+	<object data="{{ url_for('static', filename='output.pdf') }}?v={{version}}" type="application/pdf" width="100%" height="500">
+	alt : <a href="{{ url_for('static', filename='output.pdf') }}">test.pdf</a>
+	</object>
+	</div> 	
 {% endif %}
 
 <script>
+
+var lyrics = "{{lyricdata}}";
 jQuery( "#suggest_title" ).click(function() {
 	jQuery.get( "/get_title", function( data ) {
   		jQuery( "#title" ).val( data );
 	});
+});
+
+jQuery( "#rating_bad" ).click(function() {
+	jQuery.post( "/rate/0", { 'lyrics': lyrics });
+});
+
+jQuery( "#rating_neutral" ).click(function() {
+	jQuery.post( "/rate/1", { 'lyrics': lyrics });
+});
+
+jQuery( "#rating_good" ).click(function() {
+	jQuery.post( "/rate/2", { 'lyrics': lyrics });
 });
 </script>
 
