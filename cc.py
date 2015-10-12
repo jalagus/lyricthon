@@ -53,7 +53,7 @@ def ngrams(l, n):
 		dp[ngram[:n-1]] += [ (ngram[-1], di[ngram]) ]
 	return dp
 
-def generate_music(mchain, length = 30, start_word = ''):
+def generate_sentence(mchain, length = 30, start_word = ''):
 	def sum_tuples(l):
 		return reduce(lambda a,b: a + b[1], l, 0)
 
