@@ -23,7 +23,6 @@ Welcome to lyrics generator! Just enter the melody in LilyPond format and enter 
   <label for="song">Song in <a target="_blank" href="http://www.lilypond.org/">LilyPond</a> format</label>
   <textarea class="form-control" rows="5" id="song" name="song">{% if song %}{{song}}{% endif %}</textarea>
 </div>
-<button type="button" value="Generate song" class="btn btn-default" id="generate_song" > <span class="glyphicon glyphicon-music" aria-hidden="true"></span> Generate random song</button>
 
 <button type="submit" value="Send" class="btn btn-default" id="submit" > <span class="glyphicon glyphicon-music" aria-hidden="true"></span> Gimme some lyrics</button>
 </form>
@@ -55,7 +54,7 @@ jQuery( "#suggest_title" ).click(function() {
 });
 
 jQuery( "#rating_bad" ).click(function() {
-	jQuery.post( "/rate/0", { 'lyrics': lyrics });
+	jQuery.post( "/rate/-1", { 'lyrics': lyrics });
 });
 
 jQuery( "#rating_neutral" ).click(function() {

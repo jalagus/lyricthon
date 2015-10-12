@@ -6,6 +6,8 @@ from collections import defaultdict
 import random
 import re
 import math
+import text_analysis
+import nltk
 
 h_en = Hyphenator('en_US', directory='./')
 nouns = []
@@ -14,22 +16,53 @@ with open('noun_list.txt', 'r') as f:
 	for x in f.read().split():
 		nouns += [x]
 
+def create_templates(filename):
+	posd = {'NN': '[N]', 'JJ': '[A]'}
+	templates = []
+	with open(filename, 'r') as f:
+		for x in f.readlines():
+			pos = nltk.pos_tag( tuple(x.split()) )
+			templates += [' '.join([posd[w[1]] if w[1] in posd else w[0] for w in pos])]
+
+	return templates
+
 def is_noun(word):
 	if word in nouns:
 		return True
 	else:
 		return False
 
-def get_metaphors(word, top = 10):
+def templated_generator(template, metaphors_n, metaphors_a):
+	sentence = []
+	for word in template.split():
+		if word == '[A]':
+			sentence += [random.choice(metaphors_a)]
+		elif word == '[N]':
+			sentence += [random.choice(metaphors_n)]
+		else:
+			sentence += [word]
+
+	return ' '.join(sentence)
+
+def get_metaphors(word, top = 10, sentiment = 'pos'):
+	if sentiment == 'pos':
+		word = '%2B' + word
+	else:
+		word = '-' + word
+
 	response = urllib2.urlopen('http://ngrams.ucd.ie/metaphor-magnet-acl/q?kw=' + word + '&xml=true')
 	xml = response.read()
 	try:
 		root = ET.fromstring(xml)
-		metaphors = []
-		for child in root:
-			metaphors += [ child.find('Text').text.strip().split(':')[1] ]
+		metaphors_n = []
+		metaphors_a = []
 
-		return metaphors[:top]
+		for child in root:
+			temp = child.find('Text').text.strip().split(':')
+			metaphors_n += [ temp[1] ]
+			metaphors_a += [ temp[0] ]
+
+		return metaphors_n[:top], metaphors_a[:top]
 	except:
 		return []
 
@@ -82,6 +115,11 @@ def generate_sentence(mchain, length = 30, start_word = ''):
 		text += (start[-1], )
 	return text
 
+def count_syllables_in_sentence(text):
+	def syllable_count(word):
+		return len(h_en.syllables(unicode(word))) if len(h_en.syllables(unicode(word))) > 0 else 1
+	return sum([syllable_count(x) for x in text.split()])
+
 # Does not guarantee syllable count of "length"
 def generate_text_syl(mchain, length, metaphors, start_word = ''):
 	def sum_tuples(l):
@@ -125,18 +163,6 @@ def generate_text_syl(mchain, length, metaphors, start_word = ''):
 
 	return ' '.join(temp), i
 
-def generate_n_rhyming_sentences(rhymelist, mchain, n, syllables = -1):
-	sentences = []
-
-	rhymes = random.sample(rhymelist, n)
-
-	for r in rhymes:
-		line = list(generate_text_syl(markov_chain, syllables, r))
-		line.reverse()
-		sentences += [ line ]
-
-	return sentences
-
 def prettify(tuples):
 	text = ''.join(str(w) for w in tuples)
 	text = text.replace(' i ', ' I ')
@@ -148,3 +174,21 @@ def prettify(tuples):
 			text = text[:i] + text[i].upper() + text[i+1:]
 	return text
 
+def generate_lyrics(markov_chain, syllable_count, metaphors_n, metaphors_a, templates):
+	templated_rows = []
+	for x in templates:
+		s = templated_generator(x, metaphors_n, metaphors_a)
+		print s, count_syllables_in_sentence(s)
+		if count_syllables_in_sentence(s) == syllable_count:
+			templated_rows += [(s, syllable_count)]
+
+	if len(templated_rows) > 0:
+		return random.choice(templated_rows)
+
+	limit = 30
+	lyrics = generate_text_syl(markov_chain, syllable_count, metaphors_n)
+	while lyrics[1] != syllable_count and limit > 0:
+		lyrics = generate_text_syl(markov_chain, syllable_count, metaphors_n)
+		limit -= 1
+	return lyrics
+ 

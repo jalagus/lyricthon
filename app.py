@@ -3,11 +3,14 @@ from flask import Flask, render_template, send_from_directory, request
 import cc
 import lilypond
 import random
+import text_analysis
 
 NGRAM_SIZE = 3
 PORT = 5000
 
 current_version = 1
+
+templates = cc.create_templates('templates.txt')
 
 class Error:
 	def __init__(self, title, msg):
@@ -72,21 +75,27 @@ def index():
 			song = request.form['song'] if request.form['song'] else ''
 			title = request.form['title'] if request.form['title'] else ''	
 
-			metaphors = []
+			sentiment = 'neg'
+			if text_analysis.has_positive_sentiment(title):
+				sentiment = 'pos'
+
+			# Get metaphors to be used in generation
+			metaphors_n = []
+			metaphors_a = []
 			for x in title.split():
-				for m in cc.get_metaphors(x):
-					metaphors += [m]
+				m = cc.get_metaphors(x, 20, sentiment)
+				if len(m) > 1:
+					metaphors_n += m[0]
+					metaphors_a += m[1]
+
+			print metaphors_a, metaphors_n
 
 			final = ''
 			final_list = []
 			for verse in song.split('\n'):
 				sv = [x for x in verse.split() if 'r' not in x]
 
-				limit = 30
-				lyrics = cc.generate_text_syl(markov_chain, len(sv), metaphors)
-				while lyrics[1] != len(sv) and limit > 0:
-					lyrics = cc.generate_text_syl(markov_chain, len(sv), metaphors)
-					limit -= 1
+				lyrics = cc.generate_lyrics(markov_chain, len(sv), metaphors_n, metaphors_a, templates)
 
 				final_list += [lyrics[0].replace('-', '')]
 				final += cc.prettify(lyrics[0] + '.\n\n')
