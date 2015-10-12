@@ -57,7 +57,6 @@ def rating(rating):
 							markov_chain[key][index] = (item[0], item[1] + rating)
 		else:
 			markov_chain[key] = new_chain[key]
-			print "ADDING NEW ITEM", key, new_chain[key]
 	return str(rating)
 
 @app.errorhandler(404)
@@ -83,12 +82,10 @@ def index():
 			metaphors_n = []
 			metaphors_a = []
 			for x in title.split():
-				m = cc.get_metaphors(x, 20, sentiment)
+				m = cc.get_metaphors(x, 30, sentiment)
 				if len(m) > 1:
 					metaphors_n += m[0]
 					metaphors_a += m[1]
-
-			print metaphors_a, metaphors_n
 
 			final = ''
 			final_list = []
