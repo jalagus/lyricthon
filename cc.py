@@ -147,3 +147,4 @@ def prettify(tuples):
 		if text[i-2] == '.':
 			text = text[:i] + text[i].upper() + text[i+1:]
 	return text
+
