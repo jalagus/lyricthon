@@ -174,13 +174,25 @@ def prettify(tuples):
 			text = text[:i] + text[i].upper() + text[i+1:]
 	return text
 
+def get_hyphenated(text):
+	final = []
+	for w in text.split():
+		if len(w) > 0:
+			syl = '-'.join(h_en.syllables(unicode(w)))
+			if len(syl) > 0:
+				final += [syl]
+			else:
+				final += [w]
+	return ' '.join(final)
+
 def generate_lyrics(markov_chain, syllable_count, metaphors_n, metaphors_a, templates):
 	templated_rows = []
+
+	random.shuffle(templates)
 	for x in templates:
 		s = templated_generator(x, metaphors_n, metaphors_a)
-		print s, count_syllables_in_sentence(s)
 		if count_syllables_in_sentence(s) == syllable_count:
-			templated_rows += [(s, syllable_count)]
+			templated_rows += [(get_hyphenated(s), syllable_count)]
 
 	if len(templated_rows) > 0:
 		return random.choice(templated_rows)
@@ -190,5 +202,6 @@ def generate_lyrics(markov_chain, syllable_count, metaphors_n, metaphors_a, temp
 	while lyrics[1] != syllable_count and limit > 0:
 		lyrics = generate_text_syl(markov_chain, syllable_count, metaphors_n)
 		limit -= 1
+
 	return lyrics
  

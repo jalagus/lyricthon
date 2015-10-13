@@ -8,7 +8,7 @@ import text_analysis
 NGRAM_SIZE = 3
 PORT = 5000
 
-current_version = 1
+current_version = random.randint(0,6000)
 
 templates = cc.create_templates('templates.txt')
 
@@ -97,7 +97,7 @@ def index():
 				final_list += [lyrics[0].replace('-', '')]
 				final += cc.prettify(lyrics[0] + '.\n\n')
 
-			current_version += 1
+			current_version = random.randint(0, 6000)
 			lilypond.generate_pdf(song, final, title)
 
 			return render_template('index.html', song=song, title=title, lyrics=final, lyricdata=' '.join(final_list), version=current_version)
@@ -105,7 +105,7 @@ def index():
 			return render_template('index.html', song=song, title=title)
 	except Exception, e:
 		print e
-		error = Error('Error on generation!', 'Error')
+		error = Error('Error on generation!', 'Error: ' + str(e))
 		return render_template('index.html', error=error, song=song, title=title)
 
 # launch
