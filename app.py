@@ -27,7 +27,6 @@ app.config.update(
 )
 
 content_text = ''
-print os.listdir('corpus/')
 for fname in os.listdir('corpus/'):
 	if fname.endswith('.txt'):
 		f = open('corpus/' + fname, 'r')
