@@ -1,4 +1,9 @@
 from subprocess import call
+import ConfigParser
+
+Config = ConfigParser.ConfigParser()
+Config.read('config.ini')
+lilypond_path = Config.get('General', 'LilypondPath')
 
 def generate_pdf(music, lyrics, title):
 	output = '\header { title = "' + title + '"\n composer = "Lyricthon"}'
@@ -11,11 +16,11 @@ def generate_pdf(music, lyrics, title):
 	output += lyrics.replace('-', '- ')
 	output += ' } '
 
-	output += '>> \layout { } \\version "2.18.2" }'
+	output += '>> \layout { } }'
 
 	fname = 'output.ly'
 	f = open(fname, 'w')
 	f.write(output)
 	f.close()
 
-	call(['/Applications/LilyPond.app/Contents/Resources/bin/lilypond', '--output=static', fname])
+	call([lilypond_path, '--output=static', fname])

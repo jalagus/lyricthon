@@ -4,9 +4,14 @@ import cc
 import lilypond
 import random
 import text_analysis
+import ConfigParser
 
-NGRAM_SIZE = 3
-PORT = 5000
+Config = ConfigParser.ConfigParser()
+Config.read('config.ini')
+lilypond_path = Config.get('General', 'LilypondPath')
+
+NGRAM_SIZE = int(Config.get('General', 'NgramSize'))
+PORT = int(Config.get('General', 'Port'))
 
 current_version = random.randint(0,6000)
 
@@ -46,6 +51,7 @@ def get_title():
 # Adjust parameters with respect to rating
 @app.route('/rate/<int:rating>', methods=['POST'])
 def rating(rating):
+	print 'Adjusting Markov chain...'
 	data = request.form['lyrics']
 	new_chain = cc.ngrams(data.split(), NGRAM_SIZE)
 	for key in new_chain:
