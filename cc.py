@@ -188,14 +188,15 @@ def get_hyphenated(text):
 def generate_lyrics(markov_chain, syllable_count, metaphors_n, metaphors_a, templates):
 	templated_rows = []
 
-	random.shuffle(templates)
-	for x in templates:
-		s = templated_generator(x, metaphors_n, metaphors_a)
-		if count_syllables_in_sentence(s) == syllable_count:
-			templated_rows += [(get_hyphenated(s), syllable_count)]
+	if len(metaphors_a) > 0 and len(metaphors_n) > 0:
+		random.shuffle(templates)
+		for x in templates:
+			s = templated_generator(x, metaphors_n, metaphors_a)
+			if count_syllables_in_sentence(s) == syllable_count:
+				templated_rows += [(get_hyphenated(s), syllable_count)]
 
-	if len(templated_rows) > 0:
-		return random.choice(templated_rows)
+		if len(templated_rows) > 0:
+			return random.choice(templated_rows)
 
 	limit = 30
 	lyrics = generate_text_syl(markov_chain, syllable_count, metaphors_n)

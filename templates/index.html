@@ -25,6 +25,7 @@ Welcome to lyrics generator! Just enter the melody in LilyPond format and enter 
 </div>
 
 <button type="submit" value="Send" class="btn btn-default" id="submit" > <span class="glyphicon glyphicon-music" aria-hidden="true"></span> Gimme some lyrics</button>
+<button class="btn btn-default" id="get_sample" > Get example song</button>
 </form>
 
 {% if song %}
@@ -51,6 +52,18 @@ jQuery( "#suggest_title" ).click(function() {
 	jQuery.get( "/get_title", function( data ) {
   		jQuery( "#title" ).val( data );
 	});
+});
+
+jQuery( "#submit" ).click(function(event) {
+	if (jQuery( "#title" ).val().trim() == "" || jQuery( "#song" ).val().trim() == "") {
+		alert("Song and title must be given!");
+		event.preventDefault();
+	}
+});
+
+jQuery( "#get_sample" ).click(function(event) {
+	event.preventDefault();
+	jQuery( "#song" ).val( "r16 c d e f d e c g'8 c b c\nd16 g, a b c a b g d'8 g f g\ne16 a g f e g f a g f e d c e d f\ne d c b a c b d c b a g fis a g b" );
 });
 
 jQuery( "#rating_bad" ).click(function() {
