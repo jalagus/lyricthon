@@ -26,8 +26,13 @@ app.config.update(
     DEBUG = True,
 )
 
-f = open('corpus/pg158.txt', 'r')
-content_text = f.read()
+content_text = ''
+print os.listdir('corpus/')
+for fname in os.listdir('corpus/'):
+	if fname.endswith('.txt'):
+		f = open('corpus/' + fname, 'r')
+		content_text += f.read() + ' '
+
 temp = cc.tokenize(content_text)
 markov_chain = cc.ngrams(temp, NGRAM_SIZE)
 
