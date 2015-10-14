@@ -8,8 +8,6 @@ import ConfigParser
 
 Config = ConfigParser.ConfigParser()
 Config.read('config.ini')
-lilypond_path = Config.get('General', 'LilypondPath')
-
 NGRAM_SIZE = int(Config.get('General', 'NgramSize'))
 PORT = int(Config.get('General', 'Port'))
 
@@ -103,7 +101,7 @@ def index():
 				final_list += [lyrics[0].replace('-', '')]
 				final += cc.prettify(lyrics[0] + '.\n\n')
 
-			current_version = random.randint(0, 6000)
+			current_version = random.randint(0, 6000) # Caching workaround
 			lilypond.generate_pdf(song, final, title)
 
 			return render_template('index.html', song=song, title=title, lyrics=final, lyricdata=' '.join(final_list), version=current_version)
